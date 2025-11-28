@@ -90,7 +90,6 @@ func part1(input string) int {
 	}
 	counter := 0
 	dists := get_dists(board, start)
-	// baseDist = dists[start]
 	saves := make(map[int]int)
 	dirs := [][2]int{{0, 2}, {0, -2}, {2, 0}, {-2, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
 	for pos := range dists {
