@@ -6,7 +6,11 @@ object Day02 {
     val ranges = lines.head.split(",")
     val out =
       ranges.foldLeft(BigInt(0))((acc, curr) =>
-        acc + iterateAndCheck(getMinAndMax(curr)._1, getMinAndMax(curr)._2).sum
+        acc + iterateAndCheck(
+          getMinAndMax(curr)._1,
+          getMinAndMax(curr)._2,
+          isRepeated
+        ).sum
       )
     out
   }
@@ -26,13 +30,30 @@ object Day02 {
         ) && input.head == input(input.length / 2)
   }
 
-  def iterateAndCheck(min: BigInt, max: BigInt): Seq[BigInt] = {
-    (min to max).filter((a) => isRepeated(a.toString))
+  def iterateAndCheck(
+      min: BigInt,
+      max: BigInt,
+      repeatFunc: Function[String, Boolean]
+  ): Seq[BigInt] = {
+    (min to max).filter((a) => repeatFunc(a.toString))
   }
 
-  def part2(input: String): Int = {
+  def part2(input: String): BigInt = {
     val lines = input.split("\n")
-    0
+    val ranges = lines.head.split(",")
+    val out =
+      ranges.foldLeft(BigInt(0))((acc, curr) =>
+        acc + iterateAndCheck(
+          getMinAndMax(curr)._1,
+          getMinAndMax(curr)._2,
+          isRepeatedElegant
+        ).sum
+      )
+    out
+  }
+
+  def isRepeatedElegant(input: String): Boolean = {
+    (input + input).init.tail.contains(input)
   }
 
   def main(args: Array[String]): Unit = {
