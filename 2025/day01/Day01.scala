@@ -4,15 +4,21 @@ import scala.math._
 object Day01 {
   def part1(input: String): String = {
     val lines = input.split("\n")
-    val maxLen = lines.length
-    s"${getVectors(lines).scanLeft(50)((a, b) => if (a+b > 0) then (a+b)%100 else (a+b+100)%100).filter(_ == 0).length}"
+    s"${getVectors(lines).scanLeft(50)((a, b) => (a + b) % 100).filter(_ == 0).length}"
   }
 
   def part2(input: String): String = {
     val lines = input.split("\n")
-    s"${getVectors(lines).scanLeft(50)((a, b) =>
-      if (a+b > 0) then (a+b)%100
-      else (a+b+100)%100).filter(_ == 0).length}"
+    val rs = getVectors(lines).scanLeft((50, 0))({ case ((acc, out), curr) =>
+      val newCurr = acc + curr
+      val newVal = (((newCurr % 100) + 100) % 100)
+      if (newCurr > 99 || acc == 0) {
+        (newVal, out + (newCurr.abs) / 100)
+      } else if (newCurr <= 0) {
+        (newVal, out + 1 + (newCurr.abs) / 100)
+      } else (newVal, out)
+    })
+    s"${rs.last._2}"
   }
 
   def getVectors(dirs: Array[String]): Array[Int] = {
