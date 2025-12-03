@@ -9,10 +9,11 @@ object Day03 {
   def findMaxVals(input: String): Int = {
     input
       .split("")
-      .foldLeft(("0", 0))((state, curr) => {
+      .map(a => a.toInt)
+      .foldLeft((0, 0))((state, curr) => {
         val (currMax, out) = state
-        val newVal = currMax + curr
-        (((currMax.toInt).max(curr.toInt).toString), out.max(newVal.toInt))
+        val newVal = currMax * 10 + curr
+        (currMax.max(curr), out.max(newVal))
       })
       ._2
   }
