@@ -3,7 +3,7 @@ import scala.io.Source
 object Day03 {
   def part1(input: String): Int = {
     val lines = input.split("\n")
-    lines.foldLeft(0)((acc, a) => acc + findMaxVals(a))
+    lines.foldLeft(0)(_ + findMaxVals(_))
   }
 
   def findMaxVals(input: String): Int = {
