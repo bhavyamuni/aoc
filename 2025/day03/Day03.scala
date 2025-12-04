@@ -1,4 +1,5 @@
 import scala.io.Source
+import scala.collection.mutable.Stack
 
 object Day03 {
   def part1(input: String): Int = {
@@ -18,9 +19,28 @@ object Day03 {
       ._2
   }
 
-  def part2(input: String): Int = {
+  def checkMax(possibilities: String): BigInt = {
+    var out = Set[BigInt]()
+    var st = Stack(0)
+
+    for (ix <- 0 to (possibilities.length - 1)) {
+      val i = possibilities(ix).asDigit
+      while (
+        st.length > 0 && st.top < i && (st.length + possibilities.length - ix) > 12
+      ) {
+        st.pop()
+      }
+      st.push(i)
+      if (st.length == 12) {
+        out += BigInt(st.map(_.toString).reduceRight((a, b) => b + a))
+      }
+    }
+    out.max
+  }
+
+  def part2(input: String): BigInt = {
     val lines = input.split("\n")
-    0
+    lines.foldLeft(BigInt(0))((a, b) => a + checkMax(b))
   }
 
   def main(args: Array[String]): Unit = {
