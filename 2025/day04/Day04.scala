@@ -17,28 +17,8 @@ object Day04 {
       )
       .flatten
       .sum
-
     outs
   }
-
-  // def checkNeighbors(curr: (Int, Int), matrix: Array[Array[Char]]): Int = {
-  //   val maxL = matrix.length
-  //   val maxW = matrix.head.length
-  //   curr match {
-  //     case (a, b)
-  //         if a < 0 || b < 0 || a >= matrix.length || b >= matrix.head.length =>
-  //       0
-  //     case (a, b)
-  //         if countAround(curr, maxL, maxW)
-  //           .filter(a => matrix(a._1)(a._2) == '@')
-  //           .length >= 8 =>
-  //       1 + checkNeighbors((curr._1 + 1, curr._2), matrix) + checkNeighbors(
-  //         (curr._1, curr._2 + 1),
-  //         matrix
-  //       )
-  //     case _ => 0
-  //   }
-  // }
 
   def countAround(
       curr: (Int, Int),
@@ -65,7 +45,44 @@ object Day04 {
 
   def part2(input: String): Int = {
     val lines = input.split("\n")
-    0
+    var grid: Array[Array[Char]] = lines.map(a => a.toCharArray())
+    getTotalRemovals(grid)
+  }
+
+  def removeRollsFroMatrix(
+      rolls: Array[(Int, Int)],
+      matrix: Array[Array[Char]]
+  ): Array[Array[Char]] = {
+    matrix.zipWithIndex.map((a, i) =>
+      a.zipWithIndex.map((b, j) => if rolls.contains((i, j)) then '.' else b)
+    )
+  }
+
+  def getTotalRemovals(matrix: Array[Array[Char]]): Int = {
+    val maxL = matrix.length
+    val maxW = matrix.head.length
+    val rollsToRemove = (0 to maxL - 1)
+      .map(a =>
+        (0 to maxW - 1)
+          .map(b =>
+            if countAround((a, b), maxL, maxW, matrix) < 4 && matrix(a)(
+                b
+              ) == '@'
+            then ((a, b))
+            else (-1, -1)
+          )
+      )
+      .flatten
+      .filter(a => a != (-1, -1))
+      .toArray
+
+    rollsToRemove.length match {
+      case 0 => 0
+      case _ =>
+        rollsToRemove.length + getTotalRemovals(
+          removeRollsFroMatrix(rollsToRemove, matrix)
+        )
+    }
   }
 
   def main(args: Array[String]): Unit = {
