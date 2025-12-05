@@ -28,7 +28,7 @@ object Day05 {
         val currMin = BigInt(curr.split("-")(0))
         val currMax = BigInt(curr.split("-")(1))
 
-        if (currMin < state._2) {
+        if (currMin <= state._2) {
           (currMin.min(state._1), currMax.max(state._2))
         } else {
           (currMin, currMax)
@@ -41,9 +41,7 @@ object Day05 {
       } else (curr._1, state._2 + (curr._2 - curr._1 + 1))
     })
 
-    println(merged.mkString)
-    println(ct._2)
-    0
+    ct._2
   }
 
   def main(args: Array[String]): Unit = {
