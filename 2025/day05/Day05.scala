@@ -18,8 +18,31 @@ object Day05 {
       .length
   }
 
-  def part2(input: String): Int = {
-    val lines = input.split("\n")
+  def part2(input: String): BigInt = {
+    val sections = input.split("\n\n")
+    val ranges = sections.head.split("\n")
+    val sorted = ranges.sortBy(a => BigInt(a.split("-")(0)))
+
+    val merged =
+      sorted.scanLeft((BigInt(0), BigInt(0)))((state, curr) => {
+        val currMin = BigInt(curr.split("-")(0))
+        val currMax = BigInt(curr.split("-")(1))
+
+        if (currMin < state._2) {
+          (currMin.min(state._1), currMax.max(state._2))
+        } else {
+          (currMin, currMax)
+        }
+      })
+
+    val ct = merged.foldRight((BigInt(0), BigInt(-1)))((curr, state) => {
+      if (curr._1 == state._1) {
+        state
+      } else (curr._1, state._2 + (curr._2 - curr._1 + 1))
+    })
+
+    println(merged.mkString)
+    println(ct._2)
     0
   }
 
