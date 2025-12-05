@@ -21,21 +21,25 @@ object Day03 {
 
   def checkMaxRecurs(
       possibilities: String,
-      st: Stack[Int]
+      st: Stack[Int],
+      acc: BigInt
   ): BigInt = {
     st.length match {
-      case 12 => BigInt(st.map(_.toString).reduceRight((a, b) => b + a))
+      case 12 =>
+        acc.max(BigInt(st.map(_.toString).reduceRight((a, b) => b + a)))
       case _ if possibilities.length <= 0 => BigInt(0)
       case _
           if st.length > 0 && st.top < possibilities.head.asDigit && (st.length + possibilities.length) > 12 =>
         checkMaxRecurs(
           possibilities,
-          st.tail
+          st.tail,
+          acc
         )
       case _ =>
         checkMaxRecurs(
           possibilities.tail,
-          st.push(possibilities.head.asDigit)
+          st.push(possibilities.head.asDigit),
+          acc
         )
     }
   }
@@ -60,7 +64,7 @@ object Day03 {
 
   def part2(input: String): BigInt = {
     val lines = input.split("\n")
-    lines.foldLeft(BigInt(0))((a, b) => a + checkMaxRecurs(b, Stack(0)))
+    lines.foldLeft(BigInt(0))((a, b) => a + checkMaxRecurs(b, Stack(0), 0))
   }
 
   def main(args: Array[String]): Unit = {
