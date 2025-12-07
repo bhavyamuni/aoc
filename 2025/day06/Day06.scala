@@ -35,8 +35,8 @@ object Day06 {
       colNums
         .foldLeft(Array(Array(BigInt(0))))((acc, curr) => {
           curr.trim() match {
-            case ""               => acc :+ Array()
-            case all if all != "" =>
+            case ""  => acc :+ Array()
+            case all =>
               acc.init :+ (acc.last :+ BigInt(all.trim()))
           }
         })
