@@ -20,7 +20,6 @@ object Day07 {
         .indexOf('S')
 
     splitterBFS((startI + 1, startJ), matrix)
-    // splitter((startI + 1, startJ), matrix, Set())
   }
 
   // BFS
