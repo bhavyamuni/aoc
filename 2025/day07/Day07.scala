@@ -31,7 +31,6 @@ object Day07 {
     var res = 0
     var visited = Set[(Int, Int)]()
     while (!q.isEmpty) {
-      // println(q.head)
       q.dequeue match {
         case ((a, b), newQ)
             if a >= matrix.length || b < 0 || b >= matrix.head.length || visited
