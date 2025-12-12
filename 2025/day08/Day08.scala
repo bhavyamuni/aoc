@@ -34,7 +34,6 @@ object Day08 {
     val initMp: Map[Point, Array[Point]] =
       points.map(a => a -> Array[Point]()).toMap
     val juncs = makeIslands(1000, pq, initMp)
-    println(juncs.mkString("\n"))
     helper(juncs)
   }
 
