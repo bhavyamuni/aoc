@@ -31,45 +31,36 @@ object Day08 {
       PriorityQueue[((Point, Point), BigInt)]()(using Ordering.by(_._2 * -1))
     pq.addAll(distances)
 
-    val initMp: Map[Point, Set[Point]] = points.map(a => a -> Set.empty).toMap
-    val juncs = makeIslands(10, pq, initMp)
-    // println(juncs.sortBy(a => -a.size).mkString("\n"))
+    val initMp: Map[Point, Array[Point]] =
+      points.map(a => a -> Array[Point]()).toMap
+    val juncs = makeIslands(1000, pq, initMp)
     println(juncs.mkString("\n"))
-    // calculateTop3(juncs)
     helper(juncs)
   }
 
-  def calculateTop3(mp: Array[Set[Point]]): Int =
+  def calculateTop3(mp: Array[Array[Point]]): Int =
     mp.map(a => a.size).sortBy(a => a).slice(0, 3).reduceLeft(_ * _)
 
   def makeIslands(
       connections: Int,
       pq: PriorityQueue[((Point, Point), BigInt)],
-      mp: Map[Point, Set[Point]]
-  ): Map[Point, Set[Point]] = {
+      mp: Map[Point, Array[Point]]
+  ): Map[Point, Array[Point]] = {
     val lowest = pq.dequeue()
     (lowest, connections) match {
-      case (_, 0) => mp.filter((a, b) => !b.isEmpty)
-      case (((p1, p2), dist), _)
-          if mp(p1).contains(p2) || mp(p2).contains(p1) =>
-        makeIslands(
-          connections,
-          pq,
-          mp.updated(p1, mp(p1) + p2)
-            .updated(p2, mp(p2) + p1)
-        )
+      case (_, 0)                => mp.filter((a, b) => !b.isEmpty)
       case (((p1, p2), dist), _) =>
         makeIslands(
           connections - 1,
           pq,
-          mp.updated(p1, mp(p1) + p2)
-            .updated(p2, mp(p2) + p1)
+          mp.updated(p1, mp(p1) :+ p2)
+            .updated(p2, mp(p2) :+ p1)
         )
     }
   }
 
   def helper(
-      al: Map[Point, Set[Point]]
+      al: Map[Point, Array[Point]]
   ): BigInt = {
     var visited: Set[Point] = Set.empty
     def dfs(curr: Point): BigInt = {
