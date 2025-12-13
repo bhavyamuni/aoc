@@ -9,6 +9,7 @@ case class Point(
 )
 
 object Day08 {
+
   def part1(input: String): BigInt = {
     val lines = input.split("\n").sortBy(a => a.split(",")(0).toInt)
     val points =
@@ -33,8 +34,9 @@ object Day08 {
 
     val initMp: Map[Point, Array[Point]] =
       points.map(a => a -> Array[Point]()).toMap
-    val juncs = makeIslands(1000, pq, initMp)
-    helper(juncs)
+    val juncs = makeIslands(29, pq, initMp)
+
+    helper(juncs).take(3).reduceLeft(_ * _)
   }
 
   def calculateTop3(mp: Array[Array[Point]]): Int =
@@ -49,6 +51,8 @@ object Day08 {
     (lowest, connections) match {
       case (_, 0)                => mp.filter((a, b) => !b.isEmpty)
       case (((p1, p2), dist), _) =>
+        println(p1)
+        println(p2)
         makeIslands(
           connections - 1,
           pq,
@@ -60,7 +64,7 @@ object Day08 {
 
   def helper(
       al: Map[Point, Array[Point]]
-  ): BigInt = {
+  ): List[BigInt] = {
     var visited: Set[Point] = Set.empty
     def dfs(curr: Point): BigInt = {
       curr match {
@@ -79,16 +83,48 @@ object Day08 {
       .toList
       .sortBy(a => -a)
 
-    allVals.take(3).reduceLeft(_ * _)
+    allVals
   }
 
   def distance(p1: Point, p2: Point): BigInt = {
     ((p1.x - p2.x) * (p1.x - p2.x)) + ((p1.y - p2.y) * (p1.y - p2.y)) + ((p1.z - p2.z) * (p1.z - p2.z))
   }
 
-  def part2(input: String): Int = {
-    val lines = input.split("\n")
-    0
+  def part2(input: String): BigInt = {
+    val lines = input.split("\n").sortBy(a => a.split(",")(0).toInt)
+    val points =
+      lines.map(a =>
+        Point(
+          BigInt(a.split(",")(0)),
+          BigInt(a.split(",")(1)),
+          BigInt(a.split(",")(2))
+        )
+      )
+
+    val distances =
+      for (
+        a <- points.zipWithIndex; b <- points.slice(a._2 + 1, points.length + 1)
+        if a._1 != b
+      )
+        yield ((a._1, b), distance(a._1, b))
+
+    var n = 4988;
+    var nc: List[BigInt] = List();
+    val pq =
+      PriorityQueue[((Point, Point), BigInt)]()(using Ordering.by(_._2 * -1))
+    val initMp: Map[Point, Array[Point]] =
+      points.map(a => a -> Array[Point]()).toMap
+
+    while (nc.size < 1000) {
+      pq.clear()
+      pq.addAll(distances)
+      n += 1
+      val juncs = makeIslands(n, pq, initMp)
+      nc = helper(juncs)
+      // println(nc.mkString("-"))
+      // println(nc.size)
+    }
+    println(n)
   }
 
   def main(args: Array[String]): Unit = {
