@@ -124,7 +124,7 @@ object Day08 {
       // println(nc.mkString("-"))
       // println(nc.size)
     }
-    println(n)
+    n
   }
 
   def main(args: Array[String]): Unit = {
