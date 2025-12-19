@@ -1,5 +1,4 @@
 import scala.io.Source
-import z3.scala._
 
 object Day10 {
   def part1(input: String): Int = {
@@ -58,11 +57,8 @@ object Day10 {
   def flip(i: Int) = if i == 1 then 0 else 1
 
   def part2(input: String): Int = {
-    // val cfg = Z3Config("MODEL" -> true)
-    val ctx: Z3Context = new Z3Context()
     val lines = input.split("\n")
 
-    val x = ctx.mkBoolConst("a")
     0
   }
 
