@@ -1,4 +1,5 @@
 import scala.io.Source
+import z3.scala._
 
 object Day10 {
   def part1(input: String): Int = {
@@ -18,8 +19,7 @@ object Day10 {
   def findPath(finalState: List[Int], allButtons: Set[Set[Int]]) = {
     var memo: Map[(String, Int), Int] = Map()
     val finalStateSt = finalState.mkString
-    // var visited: Set[(String, Set[Set[Int]])] = Set()
-    val MAX_PRESSES = 50
+    val MAX_PRESSES = 20
     def dfs(
         state: List[Int],
         buttons: Set[Set[Int]],
@@ -58,7 +58,11 @@ object Day10 {
   def flip(i: Int) = if i == 1 then 0 else 1
 
   def part2(input: String): Int = {
+    // val cfg = Z3Config("MODEL" -> true)
+    val ctx: Z3Context = new Z3Context()
     val lines = input.split("\n")
+
+    val x = ctx.mkBoolConst("a")
     0
   }
 
@@ -66,7 +70,7 @@ object Day10 {
     val startTime = System.nanoTime()
     val input = Source.fromFile("2025/day10/input.txt").mkString
 
-    println(s"Part 1: ${part1(input)}")
+    // println(s"Part 1: ${part1(input)}")
     println(s"Part 2: ${part2(input)}")
     println(s"Run time: ${(System.nanoTime() - startTime) / 1000} microseconds")
   }
