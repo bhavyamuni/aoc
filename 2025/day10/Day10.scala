@@ -1,4 +1,6 @@
+//> using dep "tools.aqua:z3-turnkey:4.14.1"
 import scala.io.Source
+import com.microsoft.z3._
 
 object Day10 {
   def part1(input: String): Int = {
@@ -58,8 +60,62 @@ object Day10 {
 
   def part2(input: String): Int = {
     val lines = input.split("\n")
+    val ctx = new Context()
+    val solver = ctx.mkOptimize()
+    val buttons = lines
+      .map(a => a.split(" ").init.tail)
+      .map(b =>
+        b.map(c => c.init.tail.split(",").map(x => x.toInt).toList).toList
+      )
 
-    0
+    val jolts = lines
+      .map(a => a.split(" ").last.init.tail.split(","))
+      .map(a => a.map(_.toInt))
+
+    lines.zipWithIndex
+      .map((l, ln) => {
+        val buttonVars =
+          buttons(ln).zipWithIndex
+            .map((n, ix) =>
+              ctx.mkIntConst(s"l${ln}b${ix.toString()}st-${n.mkString(",")}")
+            )
+
+        buttonVars.map(x => solver.Add(ctx.mkGe(x, ctx.mkInt(0))))
+
+        getEqs(buttons(ln), buttonVars, jolts(ln), ctx)
+          .foreach(x => solver.Add(x))
+        val min = solver.MkMinimize(ctx.mkAdd(buttonVars*))
+        val sat = solver.Check()
+        if (sat == Status.SATISFIABLE) {
+          val model: Model = solver.getModel
+          min.toString.toInt
+        } else 0
+      })
+      .sum
+  }
+
+  def getEqs(
+      buttons: List[List[Int]],
+      exprs: List[IntExpr],
+      jolts: Array[Int],
+      ctx: Context
+  ) = {
+    val out = jolts.zipWithIndex.map((jolt, joltix) =>
+      ctx.mkEq(
+        ctx.mkAdd(
+          exprs.zipWithIndex
+            .filter((ex, exidx) =>
+              buttons.zipWithIndex
+                .filter(b => b._1.contains(joltix))
+                .map(_._2)
+                .contains(exidx)
+            )
+            .map(_._1)*
+        ),
+        ctx.mkInt(jolt)
+      )
+    )
+    out
   }
 
   def main(args: Array[String]): Unit = {
